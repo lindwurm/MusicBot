@@ -4,11 +4,6 @@ import configparser
 
 from discord import User as discord_User
 
-# [MBM] Multi-Language support
-# required for language support
-import importlib
-# ===== END =====
-
 
 class PermissionsDefaults:
     perms_file = 'config/permissions.ini'
@@ -32,14 +27,8 @@ class Permissions:
         self.config_file = config_file
         self.config = configparser.ConfigParser(interpolation=None)
 
-# [MBM] Multi-Language support
-        language = self.config.language
-        f = self.config.languages_location + language
-        self.lang = importlib.import_module(f)
-# ===== END =====
-
         if not self.config.read(config_file, encoding='utf-8'):
-            print(self.lang.permissions_file_missing)
+            print('[permissions] Permissions file not found, copying example_permissions.ini')
 
             try:
                 shutil.copy('config/example_permissions.ini', config_file)
@@ -47,7 +36,7 @@ class Permissions:
 
             except Exception as e:
                 traceback.print_exc()
-                raise RuntimeError(self.lang.permissions_cannot_copy % (config_file, e))
+                raise RuntimeError("Unable to copy config/example_permissions.ini to %s: %s" % (config_file, e))
 
         self.default_group = PermissionGroup('Default', self.config['Default'])
         self.groups = set()
@@ -62,6 +51,7 @@ class Permissions:
             owner_group.user_list = set(grant_all)
 
         self.groups.add(owner_group)
+
 
     def save(self):
         with open(self.config_file, 'w') as f:
@@ -90,7 +80,7 @@ class Permissions:
         return self.default_group
 
     def create_group(self, name, **kwargs):
-        self.config.read_dict({name: kwargs})
+        self.config.read_dict({name:kwargs})
         self.groups.add(PermissionGroup(name, self.config[name]))
         # TODO: Test this
 
@@ -153,12 +143,14 @@ class PermissionGroup:
             self.instaskip, PermissionsDefaults.InstaSkip
         )
 
+
     def add_user(self, uid):
         self.user_list.add(uid)
 
     def remove_user(self, uid):
         if uid in self.user_list:
             self.user_list.pop(uid)
+
 
     def __repr__(self):
         return "<PermissionGroup: %s>" % self.name
