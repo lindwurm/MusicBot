@@ -16,7 +16,7 @@ class Config:
         config = configparser.ConfigParser()
 
 # [MBM] Multi-Language support
-        language = config.get('MusicBot', 'Language', fallback=ConfigDefaults.language)
+        language = config.get('Modifications', 'Language', fallback=ConfigDefaults.language)
         if language == "":
             language = "english"
         f = config.get('Files', 'LanguagesFile', fallback=ConfigDefaults.languages_location) + language
@@ -85,7 +85,7 @@ class Config:
         self.auto_playlist_file = config.get('Files', 'AutoPlaylistFile', fallback=ConfigDefaults.auto_playlist_file)
 
 # [MBM] Multi-Language support
-        self.language = config.get('MusicBot', 'Language', fallback=ConfigDefaults.language)
+        self.language = config.get('Modifications', 'Language', fallback=ConfigDefaults.language)
         self.languages_location = config.get('Files', 'LanguagesFile', fallback=ConfigDefaults.languages_location)
 # ===== END =====
 

@@ -11,8 +11,8 @@ from .lib.event_emitter import EventEmitter
 
 # [MBM] Multi-Language support
 # required for language support
-# from musicbot.config import Config, ConfigDefaults
-# import importlib
+from musicbot.config import Config, ConfigDefaults
+import importlib
 # ===== END =====
 
 

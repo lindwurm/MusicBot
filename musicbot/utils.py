@@ -6,6 +6,24 @@ import unicodedata
 from hashlib import md5
 from .constants import DISCORD_MSG_CHAR_LIMIT
 
+# [MBM] Multi-Language support
+# required for language support
+from musicbot.config import Config, ConfigDefaults
+import importlib
+# ===== END =====
+
+
+class translation:
+    def __init__(self, config_file=ConfigDefaults.options_file):
+	
+        self.config = Config(config_file)
+# [MBM] Multi-Language support
+        language = self.config.language
+        if language == "":
+            language = "english"
+        f = self.config.languages_location + language
+        self.lang = importlib.import_module(f)
+# ===== END =====
 
 def load_file(filename, skip_commented_lines=True, comment_char='#'):
     try:
@@ -20,7 +38,7 @@ def load_file(filename, skip_commented_lines=True, comment_char='#'):
             return results
 
     except IOError as e:
-        print("Error loading", filename, e)
+        print(self.lang.utils_error_loading, filename, e)
         return []
 
 
@@ -50,7 +68,7 @@ def paginate(content, *, length=DISCORD_MSG_CHAR_LIMIT, reserve=0):
     elif type(content) == list:
         contentlist = content
     else:
-        raise ValueError("Content must be str or list, not %s" % type(content))
+        raise ValueError(self.lang.utlils_not_list % type(content))
 
     chunks = []
     currentchunk = ''

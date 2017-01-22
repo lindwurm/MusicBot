@@ -1,5 +1,5 @@
 # ======================
-# ======= BOT.PY =======
+# ======= BOT.PY =======  COMPLETED
 # ======================
 no_autoplaylist = "Warning: Autoplaylist is empty, disabling."
 autosummon_attempt = "Attempting to autosummon..."
@@ -89,7 +89,6 @@ op_delete_messages = "  Delete Messages: "
 op_delete_invoking = "  Delete Invoking: "
 op_debug_mode = "  Debug Mode: "
 op_downloaded_songs = "  Downloaded songs will be %s"
-
 op_disabled = "Disabled"
 op_enabled = "Enabled"
 op_deleted = "Deleted"
@@ -130,7 +129,7 @@ change_server_region = "[Servers] \"%s\" changed regions: %s -> %s"
 
 
 # ===========================
-# ======== CONFIG.PY ========
+# ======== CONFIG.PY ======== COMPLETED
 # ===========================
 config_file_not_found = "[config] Config file not found, copying example_options.ini"
 config_please_configure = "\nPlease configure config/options.ini and restart the bot."
@@ -148,9 +147,7 @@ config_section_missing = ("One or more required config sections are missing.",
 
 config_error_parsing = "An error has occured parsing the config:\n"
 
-config_validation_error = ("""
-                           Validation logic for bot settings.
-                           """)
+config_validation_error = ("Validation logic for bot settings.")
 
 config_error_reading = "An error has occured reading the config:\n"
 
@@ -182,31 +179,26 @@ config_invalid_autojoin = "[Warning] AutojoinChannels data invalid, will not aut
 
 
 # ============================
-# ======= CONSTANTS.PY =======
+# ======= CONSTANTS.PY ======= COMPLETED
 # ============================
-
 # NOTHING TODO HERE
-
 # ==============================
 # ====== END CONSTANTS.PY ======
 # ==============================
 
 
 # =============================
-# ======= DOWNLOADER.PY =======
+# ======= DOWNLOADER.PY ======= COMPLETED
 # =============================
-
-# Not 100% sure if the youtubedl errors either send to chat or console
-# or are just borks comments
-
+# NOTHING TODO HERE
 # ===============================
 # ====== END DOWNLOADER.PY ======
 # ===============================
 
 
 # =========================
-# ======= ENTRY.PY =======
-# ========================
+# ======= ENTRY.PY ======== COMPLETED
+# =========================
 entry_download_cache = "[Download] Cached:"
 entry_download_cache2 = "[Download] Cached (different extension):"
 entry_expected = "Expected %s, got %s"
@@ -219,7 +211,7 @@ entry_youtubedl_error = "ytdl broke and hell if I know why"
 
 
 # =============================
-# ======= EXCEPTIONS.PY =======
+# ======= EXCEPTIONS.PY ======= BROKEN
 # =============================
 exceptions_no_permission = "You don't have permission to use that command.\nReason: "
 exceptions_error_occured = "An error has occured:\n"
@@ -231,19 +223,16 @@ exceptions_solution = "  Solution: "
 
 
 # ==============================
-# ======= OPUS_LOADER.PY =======
+# ======= OPUS_LOADER.PY ======= COMPLETED
 # ==============================
-
-# TODO Maybe???
-# Is this even worth doing for one line?
-# opus_error_loading = "Could not load an opus lib. Tried %s"
+opus_error_loading = "Could not load an opus lib. Tried %s"
 # ================================
 # ====== END OPUS_LOADER.PY ======
 # ================================
 
 
 # ================================
-# ======== PERMISSIONS.PY ========
+# ======== PERMISSIONS.PY ======== COMPLETED
 # ================================
 permissions_file_missing = "[permissions] Permissions file not found, copying example_permissions.ini"
 permissions_cannot_copy = "Unable to copy config/example_permissions.ini to %s: %s"
@@ -253,7 +242,7 @@ permissions_cannot_copy = "Unable to copy config/example_permissions.ini to %s: 
 
 
 # ===========================
-# ======== PLAYER.PY ========
+# ======== PLAYER.PY ======== COMPLETED
 # ===========================
 player_cannot_resume = "Cannot resume playback from state %s"
 player_cannot_pause = "Cannot pause a MusicPlayer in state %s"
@@ -280,12 +269,10 @@ player_websocket_reconnecting = "[Debug] Voice websocket is %s, reconnecting"
 
 
 # ================================
-# =========== UTILS.PY ===========
+# =========== UTILS.PY =========== COMPLETED
 # ================================
-# TODO Maybe
-# Is this even worth doing for two line?
-# utils_error_loading = "Error loading"
-# utlils_not_list = "Content must be str or list, not %s"
+utils_error_loading = "Error loading"
+utlils_not_list = "Content must be str or list, not %s"
 # ================================
 # ========= END UTILS.PY =========
 # ================================
