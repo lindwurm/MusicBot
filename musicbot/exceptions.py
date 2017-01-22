@@ -6,18 +6,6 @@ import textwrap
 import importlib
 # ===== END =====
 
-class Config:
-    def __init__(self, config_file):
-        self.config_file = config_file
-        config = configparser.ConfigParser()
-
-# [MBM] Multi-Language support
-        if language == "":
-            language = "english"
-        f = config.get('Files', 'LanguagesFile', fallback=ConfigDefaults.languages_location) + language
-        self.lang = importlib.import_module(f)
-# ===== END =====
-
 # Base class for exceptions
 class MusicbotException(Exception):
     def __init__(self, message, *, expire_in=0):
@@ -49,6 +37,16 @@ class WrongEntryTypeError(ExtractionError):
 
 # The user doesn't have permission to use a command
 class PermissionsError(CommandError):
+    def __init__(self, config_file):
+        self.config_file = config_file
+        config = configparser.ConfigParser()
+
+# [MBM] Multi-Language support
+        if language == "":
+            language = "english"
+        f = config.get('Files', 'LanguagesFile', fallback=ConfigDefaults.languages_location) + language
+        self.lang = importlib.import_module(f)
+# ===== END =====
         @property
         def message(self):
             return self.lang.exceptions_no_permission + self._message
