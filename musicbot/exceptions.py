@@ -1,6 +1,23 @@
 import shutil
 import textwrap
 
+# [MBM] Multi-Language support
+# required for language support
+import importlib
+# ===== END =====
+
+class Config:
+    def __init__(self, config_file):
+        self.config_file = config_file
+        config = configparser.ConfigParser()
+
+# [MBM] Multi-Language support
+        if language == "":
+            language = "english"
+        f = config.get('Files', 'LanguagesFile', fallback=ConfigDefaults.languages_location) + language
+        self.lang = importlib.import_module(f)
+# ===== END =====
+
 # Base class for exceptions
 class MusicbotException(Exception):
     def __init__(self, message, *, expire_in=0):
@@ -32,9 +49,9 @@ class WrongEntryTypeError(ExtractionError):
 
 # The user doesn't have permission to use a command
 class PermissionsError(CommandError):
-    @property
-    def message(self):
-        return "You don't have permission to use that command.\nReason: " + self._message
+        @property
+        def message(self):
+            return self.lang.exceptions_no_permission + self._message
 
 # Error with pretty formatting for hand-holding users through various errors
 class HelpfulError(MusicbotException):
