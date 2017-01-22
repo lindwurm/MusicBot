@@ -4,6 +4,11 @@ import textwrap
 # [MBM] Multi-Language support
 # required for language support
 import importlib
+from musicbot import *
+# from musicbot import configparser
+# import Config
+# import ConfigDefaults
+# from musicbot.config import Config, ConfigDefaults
 # ===== END =====
 
 # Base class for exceptions
@@ -42,6 +47,7 @@ class PermissionsError(CommandError):
         config = configparser.ConfigParser()
 
 # [MBM] Multi-Language support
+        language = config.get('Modifications', 'Language', fallback=ConfigDefaults.language)
         if language == "":
             language = "english"
         f = config.get('Files', 'LanguagesFile', fallback=ConfigDefaults.languages_location) + language

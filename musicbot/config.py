@@ -53,7 +53,7 @@ class Config:
         config = configparser.ConfigParser(interpolation=None)
         config.read(config_file, encoding='utf-8')
 
-        confsections = {"Credentials", "Permissions", "Chat", "MusicBot"}.difference(config.sections())
+        confsections = {"Credentials", "Permissions", "Chat", "MusicBot", "Modifications"}.difference(config.sections())
         if confsections:
             raise HelpfulError(self.lang.config_section_missing.format(
                                ', '.join(['[%s]' % s for s in confsections])), preface=self.lang.config_error_parsing)

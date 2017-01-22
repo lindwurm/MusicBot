@@ -1921,11 +1921,11 @@ class MusicBot(discord.Client):
             if message.author.id != self.config.owner_id:
                 if user_permissions.command_whitelist and command not in user_permissions.command_whitelist:
                     raise exceptions.PermissionsError(
-                        self.lang.command_permission_no_enabled % user_permissions.name, expire_in=20)
+                        self.lang.command_permission_no_enabled % user_permissions.name)
 
                 elif user_permissions.command_blacklist and command in user_permissions.command_blacklist:
                     raise exceptions.PermissionsError(
-                        self.lang.command_permission_disabled % user_permissions.name, expire_in=20)
+                        self.lang.command_permission_disabled % user_permissions.name)
 
             if params:
                 docs = getattr(handler, '__doc__', None)
