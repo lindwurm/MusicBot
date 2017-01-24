@@ -50,14 +50,14 @@ class Playlist(EventEmitter):
         try:
             info = await self.downloader.extract_info(self.loop, song_url, download=False)
         except Exception as e:
-            raise ExtractionError('Could not extract information from {}\n\n{}'.format(song_url, e))
+            raise ExtractionError(self.lang.playlist_error_extract.format(song_url, e))
 
         if not info:
-            raise ExtractionError('Could not extract information from %s' % song_url)
+            raise ExtractionError(self.lang.playlist_error_extract2 % song_url)
 
         # TODO: Sort out what happens next when this happens
         if info.get('_type', None) == 'playlist':
-            raise WrongEntryTypeError("This is a playlist.", True, info.get('webpage_url', None) or info.get('url', None))
+            raise WrongEntryTypeError(self.lang.playlist_playlist, True, info.get('webpage_url', None) or info.get('url', None))
 
         if info['extractor'] in ['generic', 'Dropbox']:
             try:
@@ -65,19 +65,19 @@ class Playlist(EventEmitter):
                 # https://github.com/KeepSafe/aiohttp/issues/758
                 # https://github.com/KeepSafe/aiohttp/issues/852
                 content_type = await get_header(self.bot.aiosession, info['url'], 'CONTENT-TYPE')
-                print("Got content type", content_type)
+                print(self.lang.playlist_got_content, content_type)
 
             except Exception as e:
-                print("[Warning] Failed to get content type for url %s (%s)" % (song_url, e))
+                print(self.lang.playlist_failed_content % (song_url, e))
                 content_type = None
 
             if content_type:
                 if content_type.startswith(('application/', 'image/')):
                     if '/ogg' not in content_type:  # How does a server say `application/ogg` what the actual fuck
-                        raise ExtractionError("Invalid content type \"%s\" for url %s" % (content_type, song_url))
+                        raise ExtractionError(self.lang.playlist_invalid_content % (content_type, song_url))
 
                 elif not content_type.startswith(('audio/', 'video/')):
-                    print("[Warning] Questionable content type \"%s\" for url %s" % (content_type, song_url))
+                    print(self.lang.playlist_questionable_content % (content_type, song_url))
 
         entry = URLPlaylistEntry(
             self,
@@ -105,10 +105,10 @@ class Playlist(EventEmitter):
         try:
             info = await self.downloader.safe_extract_info(self.loop, playlist_url, download=False)
         except Exception as e:
-            raise ExtractionError('Could not extract information from {}\n\n{}'.format(playlist_url, e))
+            raise ExtractionError(self.lang.playlist_error_extract.format(playlist_url, e))
 
         if not info:
-            raise ExtractionError('Could not extract information from %s' % playlist_url)
+            raise ExtractionError(self.lang.playlist_error_extract2 % playlist_url)
 
         # Once again, the generic extractor fucks things up.
         if info.get('extractor', None) == 'generic':
@@ -136,12 +136,12 @@ class Playlist(EventEmitter):
                     # Once I know more about what's happening here I can add a proper message
                     traceback.print_exc()
                     print(items)
-                    print("Could not add item")
+                    print(self.lang.playlist_not_add)
             else:
                 baditems += 1
 
         if baditems:
-            print("Skipped %s bad entries" % baditems)
+            print(self.lang.playlist_skipped_bad % baditems)
 
         return entry_list, position
 
@@ -156,10 +156,10 @@ class Playlist(EventEmitter):
         try:
             info = await self.downloader.safe_extract_info(self.loop, playlist_url, download=False, process=False)
         except Exception as e:
-            raise ExtractionError('Could not extract information from {}\n\n{}'.format(playlist_url, e))
+            raise ExtractionError(self.lang.playlist_error_extract.format(playlist_url, e))
 
         if not info:
-            raise ExtractionError('Could not extract information from %s' % playlist_url)
+            raise ExtractionError(self.lang.playlist_error_extract2 % playlist_url)
 
         gooditems = []
         baditems = 0
@@ -175,7 +175,7 @@ class Playlist(EventEmitter):
                     baditems += 1
                 except Exception as e:
                     baditems += 1
-                    print("There was an error adding the song {}: {}: {}\n".format(
+                    print(self.lang.playlist_error_adding.format(
                         entry_data['id'], e.__class__.__name__, e))
             else:
                 baditems += 1
@@ -196,10 +196,10 @@ class Playlist(EventEmitter):
         try:
             info = await self.downloader.safe_extract_info(self.loop, playlist_url, download=False, process=False)
         except Exception as e:
-            raise ExtractionError('Could not extract information from {}\n\n{}'.format(playlist_url, e))
+            raise ExtractionError(self.lang.playlist_error_extract.format(playlist_url, e))
 
         if not info:
-            raise ExtractionError('Could not extract information from %s' % playlist_url)
+            raise ExtractionError(self.lang.playlist_error_extract2 % playlist_url)
 
         gooditems = []
         baditems = 0
@@ -214,13 +214,13 @@ class Playlist(EventEmitter):
                     baditems += 1
                 except Exception as e:
                     baditems += 1
-                    print("There was an error adding the song {}: {}: {}\n".format(
+                    print(self.lang.playlist_error_adding.format(
                         entry_data['id'], e.__class__.__name__, e))
             else:
                 baditems += 1
 
         if baditems:
-            print("Skipped %s bad entries" % baditems)
+            print(self.lang.playlist_skipped_bad % baditems)
 
         return gooditems
 

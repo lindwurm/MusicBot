@@ -32,6 +32,14 @@ class Permissions:
     def __init__(self, config_file, grant_all=None):
         self.config_file = config_file
         self.config = configparser.ConfigParser(interpolation=None)
+		
+# [MBM] Multi-Language support
+        language = self.config.get('Modifications', 'Language', fallback=ConfigDefaults.language)
+        if language == "":
+            language = "english"
+        f = self.config.get('Files', 'LanguagesFile', fallback=ConfigDefaults.languages_location) + language
+        self.lang = importlib.import_module(f)
+# ===== END =====
 
         if not self.config.read(config_file, encoding='utf-8'):
             print(self.lang.permissions_file_missing)

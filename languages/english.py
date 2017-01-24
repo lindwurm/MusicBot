@@ -141,9 +141,9 @@ config_files_missing = ("Your config files are missing.  Neither options.ini nor
 config_invalid_ownerid = "\nInvalid value for OwnerID, config cannot be loaded."
 config_cannot_copy_example = "\nUnable to copy config/example_options.ini to %s"
 
-config_section_missing = ("One or more required config sections are missing.",
-                          "Fix your config.  Each [Section] should be on its own line with "
-                          "nothing else on it.  The following sections are missing: {}")
+config_section_missing = ('One or more required config sections are missing.',
+                          'Fix your config.  Each [Section] should be on its own line with '
+                          'nothing else on it.  The following sections are missing: {}')
 
 config_error_parsing = "An error has occured parsing the config:\n"
 
@@ -258,11 +258,18 @@ player_websocket_reconnecting = "[Debug] Voice websocket is %s, reconnecting"
 
 
 # =============================
-# ======== PLAYLIST.PY ========
+# ======== PLAYLIST.PY ======== COMPLETED
 # =============================
-
-# TODO
-
+playlist_error_extract = "Could not extract information from {}\n\n{}"
+playlist_error_extract2 = "Could not extract information from %s"
+playlist_playlist = "This is a playlist."
+playlist_got_content = "Got content type"
+playlist_failed_content = "[Warning] Failed to get content type for url %s (%s)"
+playlist_invalid_content = "Invalid content type \"%s\" for url %s"
+playlist_questionable_content = "[Warning] Questionable content type \"%s\" for url %s"
+playlist_not_add = "Could not add item"
+playlist_skipped_bad = "Skipped %s bad entries"
+playlist_error_adding = "There was an error adding the song {}: {}: {}\n"
 # =============================
 # ====== END PLAYLIST.PY ======
 # =============================
