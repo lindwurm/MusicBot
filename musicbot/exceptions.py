@@ -4,11 +4,8 @@ import textwrap
 # [MBM] Multi-Language support
 # required for language support
 import importlib
-from musicbot import *
-# from musicbot import configparser
-# import Config
-# import ConfigDefaults
-# from musicbot.config import Config, ConfigDefaults
+import configparser
+import config
 # ===== END =====
 
 # Base class for exceptions
@@ -42,12 +39,10 @@ class WrongEntryTypeError(ExtractionError):
 
 # The user doesn't have permission to use a command
 class PermissionsError(CommandError):
-    def __init__(self, config_file):
-        self.config_file = config_file
-        config = configparser.ConfigParser()
+    def __init__(self):
 
 # [MBM] Multi-Language support
-        language = config.get('Modifications', 'Language', fallback=ConfigDefaults.language)
+        language = self.config.langauge
         if language == "":
             language = "english"
         f = config.get('Files', 'LanguagesFile', fallback=ConfigDefaults.languages_location) + language

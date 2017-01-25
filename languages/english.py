@@ -116,7 +116,7 @@ ignore_self = "Ignoring command from myself (%s)"
 
 no_private_message = "You cannot use this bot in private messages."
 
-command_permission_no_enabled = "This command is not enabled for your group (%s)."
+command_permission_not_enabled = "This command is not enabled for your group (%s)."
 command_permission_disabled = "This command is disabled for your group (%s)."
 
 config_unpause = "[config:autopause] Unpausing"
