@@ -84,7 +84,7 @@ class MusicBot(discord.Client):
         self.cached_client_id = None
 
         if not self.autoplaylist:
-            print("Warning: Autoplaylist is empty, disabling.")
+            print("警告: Autoplaylist は空のため、無効になりました。")
             self.config.auto_playlist = False
 
         # TODO: Do these properly
@@ -105,7 +105,7 @@ class MusicBot(discord.Client):
             if not orig_msg or orig_msg.author.id == self.config.owner_id:
                 return await func(self, *args, **kwargs)
             else:
-                raise exceptions.PermissionsError("only the owner can use this command", expire_in=30)
+                raise exceptions.PermissionsError("このコマンドを使用できるのはマスターだけです。", expire_in=30)
 
         return wrapper
 
@@ -144,7 +144,7 @@ class MusicBot(discord.Client):
     async def _auto_summon(self):
         owner = self._get_owner(voice=True)
         if owner:
-            self.safe_print("Found owner in \"%s\", attempting to join..." % owner.voice_channel.name)
+            self.safe_print("マスターを \"%s\" に確認、参加を試みています..." % owner.voice_channel.name)
             # TODO: Effort
             await self.cmd_summon(owner.voice_channel, owner, None)
             return owner.voice_channel
@@ -154,20 +154,20 @@ class MusicBot(discord.Client):
 
         for channel in channels:
             if channel.server in joined_servers:
-                print("Already joined a channel in %s, skipping" % channel.server.name)
+                print("既に %s のチャンネルに参加しています、スキップ中" % channel.server.name)
                 continue
 
             if channel and channel.type == discord.ChannelType.voice:
-                self.safe_print("Attempting to autojoin %s in %s" % (channel.name, channel.server.name))
+                self.safe_print("チャンネル %s (サーバー: %s ) に参加を試みています" % (channel.name, channel.server.name))
 
                 chperms = channel.permissions_for(channel.server.me)
 
                 if not chperms.connect:
-                    self.safe_print("Cannot join channel \"%s\", no permission." % channel.name)
+                    self.safe_print("権限がないため、チャンネル \"%s\" への参加に失敗しました。" % channel.name)
                     continue
 
                 elif not chperms.speak:
-                    self.safe_print("Will not join channel \"%s\", no permission to speak." % channel.name)
+                    self.safe_print("発言の権限がないため、チャンネル \"%s\" へは参加しません。" % channel.name)
                     continue
 
                 try:
@@ -183,10 +183,10 @@ class MusicBot(discord.Client):
                 except Exception as e:
                     if self.config.debug_mode:
                         traceback.print_exc()
-                    print("Failed to join", channel.name)
+                    print("参加に失敗しました", channel.name)
 
             elif channel:
-                print("Not joining %s on %s, that's a text channel." % (channel.name, channel.server.name))
+                print("%s (サーバー: %s ) には参加できません。そこはテキストチャンネルです。" % (channel.name, channel.server.name))
 
             else:
                 print("Invalid channel thing: " + channel)
@@ -208,7 +208,7 @@ class MusicBot(discord.Client):
             return True
         else:
             raise exceptions.PermissionsError(
-                "you cannot use this command when not in the voice channel (%s)" % vc.name, expire_in=30)
+                "ボイスチャンネル %s に参加していないので、このコマンドを使用することはできません。" % vc.name, expire_in=30)
 
     async def generate_invite_link(self, *, permissions=None, server=None):
         if not self.cached_client_id:
@@ -252,20 +252,20 @@ class MusicBot(discord.Client):
             retries = 3
             for x in range(retries):
                 try:
-                    print("Attempting connection...")
+                    print("接続を試行中です...")
                     await asyncio.wait_for(voice_client.connect(), timeout=10, loop=self.loop)
-                    print("Connection established.")
+                    print("接続を確立しました。")
                     break
                 except:
                     traceback.print_exc()
-                    print("Failed to connect, retrying (%s/%s)..." % (x+1, retries))
+                    print("接続に失敗しました、再試行中です (%s/%s)..." % (x+1, retries))
                     await asyncio.sleep(1)
                     await self.ws.voice_state(server.id, None, self_mute=True)
                     await asyncio.sleep(1)
 
                     if x == retries-1:
                         raise exceptions.HelpfulError(
-                            "Cannot establish connection to voice chat.  "
+                            "ボイスチャットへの接続を確立できませんでした。  "
                             "Something may be blocking outgoing UDP connections.",
 
                             "This may be an issue with a firewall blocking UDP.  "
@@ -356,8 +356,8 @@ class MusicBot(discord.Client):
         if server.id not in self.players:
             if not create:
                 raise exceptions.CommandError(
-                    'The bot is not in a voice channel.  '
-                    'Use %ssummon to summon it to your voice channel.' % self.config.command_prefix)
+                    'botがボイスチャンネルにいません。  '
+                    '%ssummon コマンドを使用してあなたのいるボイスチャンネルに参加させてください。' % self.config.command_prefix)
 
             voice_client = await self.get_voice_client(channel)
 
@@ -393,10 +393,10 @@ class MusicBot(discord.Client):
                     break  # This is probably redundant
 
             if self.config.now_playing_mentions:
-                newmsg = '%s - your song **%s** is now playing in %s!' % (
+                newmsg = '%s がリクエストした **%s** を %s で再生します！' % (
                     entry.meta['author'].mention, entry.title, player.voice_client.channel.name)
             else:
-                newmsg = 'Now playing in %s: **%s**' % (
+                newmsg = '%s で再生中: **%s**' % (
                     player.voice_client.channel.name, entry.title)
 
             if self.server_specific_data[channel.server]['last_np_msg']:
@@ -845,11 +845,11 @@ class MusicBot(discord.Client):
     async def cmd_play(self, player, channel, author, permissions, leftover_args, song_url):
         """
         Usage:
-            {command_prefix}play song_link
-            {command_prefix}play text to search for
+            {command_prefix}play [song_link]
+            {command_prefix}play [検索ワード]
 
-        Adds the song to the playlist.  If a link is not provided, the first
-        result from a youtube search is added to the queue.
+        曲をプレイリストに追加します。リンクが与えられなかった場合は、
+        YouTubeでの最初の検索結果がキューに追加されます。
         """
 
         song_url = song_url.strip('<>')
@@ -992,7 +992,7 @@ class MusicBot(discord.Client):
                     expire_in=30
                 )
 
-            reply_text = "Enqueued **%s** songs to be played. Position in queue: %s"
+            reply_text = "**%s** を再生キューに追加しました！ キュー内の位置: %s"
             btext = str(listlen - drop_count)
 
         else:
@@ -1015,17 +1015,17 @@ class MusicBot(discord.Client):
 
                 return await self.cmd_play(player, channel, author, permissions, leftover_args, e.use_url)
 
-            reply_text = "Enqueued **%s** to be played. Position in queue: %s"
+            reply_text = "**%s** を再生キューに追加しました！ キュー内の位置: %s"
             btext = entry.title
 
         if position == 1 and player.is_stopped:
-            position = 'Up next!'
+            position = 'このあとすぐです！'
             reply_text %= (btext, position)
 
         else:
             try:
                 time_until = await player.playlist.estimate_time_until(position, player)
-                reply_text += ' - estimated time until playing: %s'
+                reply_text += ' - 残り再生時間: %s'
             except:
                 traceback.print_exc()
                 time_until = ''
@@ -1201,7 +1201,7 @@ class MusicBot(discord.Client):
 
         search_query = '%s%s:%s' % (services[service], items_requested, ' '.join(leftover_args))
 
-        search_msg = await self.send_message(channel, "Searching for videos...")
+        search_msg = await self.send_message(channel, "動画を検索しています...")
         await self.send_typing(channel)
 
         try:
@@ -1214,7 +1214,7 @@ class MusicBot(discord.Client):
             await self.safe_delete_message(search_msg)
 
         if not info:
-            return Response("No videos found.", delete_after=30)
+            return Response("動画が見つかりませんでした", delete_after=30)
 
         def check(m):
             return (
@@ -1224,10 +1224,10 @@ class MusicBot(discord.Client):
                 m.content.lower().startswith('exit'))
 
         for e in info['entries']:
-            result_message = await self.safe_send_message(channel, "Result %s/%s: %s" % (
+            result_message = await self.safe_send_message(channel, "検索結果 %s/%s: %s" % (
                 info['entries'].index(e) + 1, len(info['entries']), e['webpage_url']))
 
-            confirm_message = await self.safe_send_message(channel, "Is this ok? Type `y`, `n` or `exit`")
+            confirm_message = await self.safe_send_message(channel, "これでいいですか？ `y`, `n` or `exit` で教えてくださいね")
             response_message = await self.wait_for_message(30, author=author, channel=channel, check=check)
 
             if not response_message:
@@ -1250,7 +1250,7 @@ class MusicBot(discord.Client):
 
                 await self.cmd_play(player, channel, author, permissions, [], e['webpage_url'])
 
-                return Response("Alright, coming right up!", delete_after=30)
+                return Response("了解しました、行きますよ！", delete_after=30)
             else:
                 await self.safe_delete_message(result_message)
                 await self.safe_delete_message(confirm_message)
@@ -1276,16 +1276,16 @@ class MusicBot(discord.Client):
             prog_str = '`[%s/%s]`' % (song_progress, song_total)
 
             if player.current_entry.meta.get('channel', False) and player.current_entry.meta.get('author', False):
-                np_text = "Now Playing: **%s** added by **%s** %s\n" % (
+                np_text = "再生中: **%s** / リクエスト者: **%s** %s\n" % (
                     player.current_entry.title, player.current_entry.meta['author'].name, prog_str)
             else:
-                np_text = "Now Playing: **%s** %s\n" % (player.current_entry.title, prog_str)
+                np_text = "再生中: **%s** %s\n" % (player.current_entry.title, prog_str)
 
             self.server_specific_data[server]['last_np_msg'] = await self.safe_send_message(channel, np_text)
             await self._manual_delete_check(message)
         else:
             return Response(
-                'There are no songs queued! Queue something with {}play.'.format(self.config.command_prefix),
+                'キューに入っている曲はありません！ {}play でキューに追加しましょう。'.format(self.config.command_prefix),
                 delete_after=30
             )
 
@@ -1298,7 +1298,7 @@ class MusicBot(discord.Client):
         """
 
         if not author.voice_channel:
-            raise exceptions.CommandError('You are not in a voice channel!')
+            raise exceptions.CommandError('あなたはボイスチャンネルにいません！')
 
         voice_client = self.the_voice_clients.get(channel.server.id, None)
         if voice_client and voice_client.channel.server == author.voice_channel.server:
@@ -1309,16 +1309,16 @@ class MusicBot(discord.Client):
         chperms = author.voice_channel.permissions_for(author.voice_channel.server.me)
 
         if not chperms.connect:
-            self.safe_print("Cannot join channel \"%s\", no permission." % author.voice_channel.name)
+            self.safe_print("権限がないため、チャンネル \"%s\" への参加に失敗しました。" % author.voice_channel.name)
             return Response(
-                "```Cannot join channel \"%s\", no permission.```" % author.voice_channel.name,
+                "```権限がないため、チャンネル \"%s\" への参加に失敗しました。```" % author.voice_channel.name,
                 delete_after=25
             )
 
         elif not chperms.speak:
-            self.safe_print("Will not join channel \"%s\", no permission to speak." % author.voice_channel.name)
+            self.safe_print("発言の権限がないため、チャンネル \"%s\" へは参加しません。" % author.voice_channel.name)
             return Response(
-                "```Will not join channel \"%s\", no permission to speak.```" % author.voice_channel.name,
+                "```発言の権限がないため、チャンネル \"%s\" へは参加しません。```" % author.voice_channel.name,
                 delete_after=25
             )
 
@@ -1465,7 +1465,7 @@ class MusicBot(discord.Client):
         """
         Usage:
             {command_prefix}remove [number]
-	    
+
         Removes a song from the queue at the given position, where the position is a number from {command_prefix}queue.
         """
 
@@ -1501,7 +1501,7 @@ class MusicBot(discord.Client):
         """
 
         if not new_volume:
-            return Response('Current volume: `%s%%`' % int(player.volume * 100), reply=True, delete_after=20)
+            return Response('現在の音量: `%s%%`' % int(player.volume * 100), reply=True, delete_after=20)
 
         relative = False
         if new_volume[0] in '+-':
@@ -1511,7 +1511,7 @@ class MusicBot(discord.Client):
             new_volume = int(new_volume)
 
         except ValueError:
-            raise exceptions.CommandError('{} is not a valid number'.format(new_volume), expire_in=20)
+            raise exceptions.CommandError('{} は有効な数値ではありません！'.format(new_volume), expire_in=20)
 
         if relative:
             vol_change = new_volume
@@ -1522,7 +1522,7 @@ class MusicBot(discord.Client):
         if 0 < new_volume <= 100:
             player.volume = new_volume / 100.0
 
-            return Response('updated volume from %d to %d' % (old_volume, new_volume), reply=True, delete_after=20)
+            return Response('音量を %d から %d に変更しました。' % (old_volume, new_volume), reply=True, delete_after=20)
 
         else:
             if relative:
@@ -1576,7 +1576,7 @@ class MusicBot(discord.Client):
 
         if not lines:
             lines.append(
-                'There are no songs queued! Queue something with {}play.'.format(self.config.command_prefix))
+                'キューに入っている曲はありません！ {}play でキューに追加しましょう。'.format(self.config.command_prefix))
 
         message = '\n'.join(lines)
         return Response(message, delete_after=30)
